@@ -16,10 +16,15 @@ Parameters:
       - t3.micro
       - t3.small
 
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: mocanada-kp
+    Description: EC2 key pair for SSH access
+
   AMIId:
-    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
-    Description: Latest public Amazon Linux 2 AMI
+    Type: AWS::EC2::Image::Id
+    Default: ami-02bcdd2c1673f8635
+    Description: Amazon Linux 2 AMI in ca-central-1
 
   VpcId:
     Type: AWS::EC2::VPC::Id
@@ -43,6 +48,7 @@ Resources:
     Properties:
       InstanceType: !Ref InstanceType
       ImageId: !Ref AMIId
+      KeyName: !Ref KeyName
       SecurityGroupIds:
         - !Ref InstanceSecurityGroup
       Tags:
@@ -53,3 +59,7 @@ Outputs:
   InstanceId:
     Description: The ID of the EC2 instance
     Value: !Ref EC2Instance
+
+  PublicIP:
+    Description: Public IP address of the EC2 instance
+    Value: !GetAtt EC2Instance.PublicIp
